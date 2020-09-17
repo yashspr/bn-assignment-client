@@ -1,32 +1,43 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
-  </div>
+	<div id="app">
+		<Navbar />
+		<router-view />
+		<b-alert
+			v-model="alert.show"
+			class="position-fixed fixed-top m-0 rounded-0"
+			style="z-index: 2000;"
+			:variant="alert.type"
+			dismissible
+		>
+			{{ alert.message }}
+		</b-alert>
+	</div>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import Navbar from './components/Navbar'
+import { EventBus } from './services/EventBus'
+import { setAlertProps } from './utils/alerts'
 
-#nav {
-  padding: 30px;
-}
+export default {
+	name: 'App',
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
+	components: {
+		Navbar
+	},
 
-#nav a.router-link-exact-active {
-  color: #42b983;
+	data: () => ({
+		alert: {
+			show: false,
+			message: '',
+			type: 'primary'
+		}
+	}),
+
+	mounted: function() {
+		EventBus.$on('show-main-alert', (err, customMessage) => {
+			setAlertProps(err, this.alert, customMessage)
+		})
+	}
 }
-</style>
+</script>

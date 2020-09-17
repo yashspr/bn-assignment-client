@@ -1,18 +1,40 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+	<div class="home">
+		<div v-if="!user">
+			<h4 class="m-4">Please login or signup to continue</h4>
+		</div>
+		<div v-if="user">
+			<router-view />
+		</div>
+	</div>
 </template>
 
 <script>
 // @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
-
+import { mapState } from 'vuex'
 export default {
-  name: 'Home',
-  components: {
-    HelloWorld
-  }
+	name: 'Home',
+	components: {},
+	data: () => ({}),
+	computed: mapState({
+		user: 'user'
+	}),
+	methods: {
+		redirect() {
+			if (this.user) {
+				if (this.user.type === 'CUSTOMER') {
+					this.$router.replace({ path: '/customer/transactions' })
+				} else if (this.user.type === 'BANKER') {
+					this.$router.replace({ path: '/banker' })
+				}
+			}
+		}
+	},
+	mounted: function() {
+		this.redirect()
+	},
+	updated: function() {
+		this.redirect()
+	}
 }
 </script>
